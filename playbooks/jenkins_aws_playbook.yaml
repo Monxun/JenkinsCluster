@@ -1,0 +1,36 @@
+---
+- name: Provision S3 backend + DynamoDb table for state locking
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tags: provisioning
+  
+  vars_files:
+    - ../vars/jenkins_vars.yml
+
+  tasks:
+    - name: get Terraform networking variables
+      fetch_terraform_backend_outputs:
+        bucket: "jenkins-state-nightwalkers"
+        object: "us-east-1/s3/jenkins-terraform.tfstate"
+      register: networking
+    - name: filter vpc id
+      debug:
+        msg: "{{ networking.vars.katapult_cloud_vpc_id }}"
+      - command: "export {{ item }}"
+        with_items:
+        # BACKEND
+        - "TF_STATE_BUCKET=jenkins-state-nightwalkers"
+        - "TF_STATE_OBJECT_KEY=us-east-1/s3/jenkins-terraform.tfstate"
+        - "TF_LOCK_DB=tf-state-jenkins-lock"   
+        - "AWS_REGION=us-east-1"
+          # RESOURCE ID'S / ARN'S
+        - "PRIVATE_SUBNETS='["subnet-5d12c221","subnet-2178df6d","subnet-29452043"]'"
+        - "PUBLIC_SUBNETS='["subnet-057d1da9eccbc21f5","subnet-0e191545ee05b0ad5","subnet-04d21adeb136042c1"]'
+        - "TF_VAR_route53_zone_id={{ lookup('amazon.aws.aws_secret', 'aline-financial-mg/microservice-secrets', bypath=true) }}"
+        - "TF_VAR_vpc_id={{ lookup('amazon.aws.aws_secret', 'aline-financial-mg/microservice-secrets', bypath=true) }}"
+
+        - "TF_VAR_efs_subnet_ids=${PRIVATE_SUBNETS}
+        - "TF_VAR_jenkins_controller_subnet_ids=${PRIVATE_SUBNETS}
+        - "TF_VAR_alb_subnet_ids={PUBLIC_SUBNETS}"
+      

@@ -1,0 +1,111 @@
+---
+- hosts: localhost
+  become: false
+
+  # vars_files:
+  # - ../vars/static_vars.yml
+
+  vars:
+    project_path: ~/Git/Heirophany/templates/ansible/aws-static/terraform/static
+    state: present
+    aws_region: us-west-1
+    state_bucket: jenkins-state-nightwalkers 
+    state_object_key: us-east-1/s3/jenkins-terraform.tfstate
+    lock_db: tf-state-jenkins-lock
+
+  environment:
+
+    TF_VAR_shared_vpc_name: nightwalkers-vpc
+
+    TF_VAR_state_bucket_name: jenkins-state-nightwalkers 
+    TF_VAR_state_object_key: us-east-1/s3/jenkins-terraform.tfstate
+    TF_VAR_state_lock_table_name: tf-state-jenkins-lock
+
+    TF_VAR_db_username: "{{ lookup('aws_secret', 'alinedbSecret.username', region='us-east-1', nested=true) }}"
+    TF_VAR_db_password: "{{ lookup('aws_secret', 'alinedbSecret.password', region='us-east-1', nested=true) }}"
+    TF_VAR_db_engine: "{{ lookup('aws_secret', 'alinedbSecret.engine', region='us-east-1', nested=true) }}"
+    TF_VAR_db_identifier: "{{ lookup('aws_secret', 'alinedbSecret.dbInstanceIdentifier', region='us-east-1', nested=true) }}"
+    TF_VAR_db_name: "{{ lookup('aws_secret', 'alinedbSecret.dbInstanceIdentifier', region='us-east-1', nested=true) }}"
+
+  tasks:
+    # - name: Run Terraform for Static Resources
+    #   script: ~/Git/Heirophany/templates/ansible/aws-static/terraform/static/run.sh
+
+    - name: Define the backend configuration at init
+      community.general.terraform:
+        project_path: "{{ project_path }}"
+        state: "{{ state }}"
+        force_init: true
+        backend_config:
+          region: "{{ aws_region }}"
+          bucket: "{{ state_bucket }}"
+          key: "{{ state_object_key }}"
+
+    - name: Basic deploy of a service
+      community.general.terraform:
+        project_path: '{{ project_dir }}'
+        state: "{{ state }}"
+
+    # - name: Define the backend configuration with one or more files at init
+    #   community.general.terraform:
+    #     project_path: 'project/'
+    #     state: "{{ state }}"
+    #     force_init: true
+    #     backend_config_files:
+    #       - /path/to/backend_config_file_1
+    #       - /path/to/backend_config_file_2
+
+    # - name: Disable plugin discovery and auto-download by setting plugin_paths
+    #   community.general.terraform:
+    #     project_path: 'project/'
+    #     state: "{{ state }}"
+    #     force_init: true
+    #     plugin_paths:
+    #       - /path/to/plugins_dir_1
+    #       - /path/to/plugins_dir_2
+
+### Example directory structure for plugin_paths example
+# $ tree /path/to/plugins_dir_1
+# /path/to/plugins_dir_1/
+# └── registry.terraform.io
+#     └── hashicorp
+#         └── vsphere
+#             ├── 1.24.0
+#             │   └── linux_amd64
+#             │       └── terraform-provider-vsphere_v1.24.0_x4
+#             └── 1.26.0
+#                 └── linux_amd64
+#                     └── terraform-provider-vsphere_v1.26.0_x4
+
+
+
+    # - name: Add Terraform Outputs to AWS Secrets Manager
+    #     community.aws.aws_secret:
+    #     name: 'test_secret_string'
+    #     state: present
+    #     secret_type: 'string'
+    #     secret: "{{ super_secret_string }}"
+
+    # - name: Add string to AWS Secrets Manager
+    #     community.aws.aws_secret:
+    #     name: 'test_secret_string'
+    #     state: present
+    #     secret_type: 'string'
+    #     secret: "{{ super_secret_string }}"
+    # - name: remove string from AWS Secrets Manager
+    #   community.aws.aws_secret:
+    #     name: 'test_secret_string'
+    #     state: absent
+    #     secret_type: 'string'
+    #     secret: "{{ super_secret_string }}"
+      
+
+  #   - name: get Terraform networking variables
+  #     fetch_terraform_backend_outputs:
+  #       bucket: "jenkins-state-nightwalkers"
+  #       object: "eu-west-1/networking.tfstate"
+  #     register: networking
+  #   - name: filter vpc id
+  #     debug:
+  #       msg: "{{ networking.vars.katapult_cloud_vpc_id }}"
+  
