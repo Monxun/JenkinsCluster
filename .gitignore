@@ -132,3 +132,4 @@ dmypy.json
 .terraform*
 terraform/jenkins/main.tf
 terraform/jenkins/terraform.tfstate
+terraform/jenkins/terraform.tfstate.backup
