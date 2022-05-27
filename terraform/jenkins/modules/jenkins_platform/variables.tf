@@ -209,7 +209,7 @@ variable ecs_execution_role_arn {
 // Route 53
 variable route53_create_alias {
   type    = string
-  default = false
+  default = true
 }
 
 variable route53_zone_id {

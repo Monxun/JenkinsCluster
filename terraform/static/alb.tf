@@ -10,5 +10,6 @@ resource "aws_lb" "public_alb" {
 
   tags = {
     Name = format("%s-alb", var.vpc_name)
+    workspace = var.workspace_name
   }
 }

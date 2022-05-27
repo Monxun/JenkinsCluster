@@ -1,5 +1,9 @@
 # vars.tf
 
+variable "workspace_name" {
+  type = string
+  default = "jenkins"
+}
 
 # //////////////////////////////////////
 # AWS - Variables
@@ -28,6 +32,7 @@ variable "additional_tags" {
   default = {
     owner = "nightwalkers"
     managed_by = "terraform"
+    workspace = "jenkins"
   }
 }
 

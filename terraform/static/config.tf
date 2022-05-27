@@ -6,4 +6,10 @@ terraform {
         dynamodb_table = "tf-state-jenkins-lock"
         encrypt = true
     }
+
+    required_providers {
+
+  }
 }
+
+

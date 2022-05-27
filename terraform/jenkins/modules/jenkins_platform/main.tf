@@ -194,8 +194,8 @@ resource "aws_lb_listener_rule" redirect_http_to_https {
 resource "aws_route53_record" this {
   count = var.route53_create_alias ? 1 : 0
 
-  zone_id = var.route53_zone_id
-  name    = var.route53_alias_name
+  zone_id =data.aws_route53_zone.selected.zone_id
+  name    = "jenkins.${data.aws_route53_zone.selected.name}"
   type    = "A"
 
   alias {

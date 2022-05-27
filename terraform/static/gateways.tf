@@ -8,6 +8,7 @@ resource "aws_internet_gateway" "this" {
 
   tags = {
     Name = "${var.vpc_name}-internet-gateway"
+    workspace = var.workspace_name
   }
 }
 
@@ -19,6 +20,7 @@ resource "aws_eip" "nat_a" {
 
   tags = {
     Name = "${var.vpc_name}-eip-nat-a"
+    workspace = var.workspace_name
   }
 }
 
@@ -32,6 +34,7 @@ resource "aws_nat_gateway" "zone_a" {
 
   tags = {
     Name = "${var.vpc_name}-nat-gateway-aza"
+    workspace = var.workspace_name
   }
 
   depends_on = [
@@ -45,6 +48,7 @@ resource "aws_eip" "nat_b" {
 
   tags = {
     Name = "${var.vpc_name}-eip-nat-b"
+    workspace = var.workspace_name
   }
 }
 
@@ -55,6 +59,7 @@ resource "aws_nat_gateway" "zone_b" {
 
   tags = {
     Name = "${var.vpc_name}-nat-gateway-azb"
+    workspace = var.workspace_name
   }
 
   depends_on = [

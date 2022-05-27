@@ -21,6 +21,7 @@ resource "aws_route_table" "public" {
 
   tags = {
     Name = "${var.vpc_name}-public-route-table"
+    workspace = var.workspace_name
   }
 
   depends_on = [
@@ -48,6 +49,7 @@ resource "aws_route_table" "private_aza" {
 
   tags = {
     Name = "${var.vpc_name}-private-route-table-aza"
+    workspace = var.workspace_name
   }
 
   depends_on = [
@@ -67,6 +69,7 @@ resource "aws_route_table" "private_azb" {
 
   tags = {
     Name = "${var.vpc_name}-private-route-table-azb"
+    workspace = var.workspace_name
   }
 
   depends_on = [

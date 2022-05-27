@@ -15,17 +15,17 @@
 
   environment:
 
-    TF_VAR_shared_vpc_name: nightwalkers-vpc
+    
 
     TF_VAR_state_bucket_name: jenkins-state-nightwalkers 
     TF_VAR_state_object_key: us-east-1/s3/jenkins-terraform.tfstate
     TF_VAR_state_lock_table_name: tf-state-jenkins-lock
 
-    TF_VAR_db_username: "{{ lookup('aws_secret', 'alinedbSecret.username', region='us-east-1', nested=true) }}"
-    TF_VAR_db_password: "{{ lookup('aws_secret', 'alinedbSecret.password', region='us-east-1', nested=true) }}"
-    TF_VAR_db_engine: "{{ lookup('aws_secret', 'alinedbSecret.engine', region='us-east-1', nested=true) }}"
-    TF_VAR_db_identifier: "{{ lookup('aws_secret', 'alinedbSecret.dbInstanceIdentifier', region='us-east-1', nested=true) }}"
-    TF_VAR_db_name: "{{ lookup('aws_secret', 'alinedbSecret.dbInstanceIdentifier', region='us-east-1', nested=true) }}"
+    TF_VAR_shared_vpc_name: nightwalkers-vpc
+    TF_VAR_public_subnet_cidrs: "{{ lookup('aws_secret', 'alinedbSecret.username', region='us-east-1', nested=true) }}"
+    TF_VAR_private_subnet_cidrs: "{{ lookup('aws_secret', 'alinedbSecret.username', region='us-east-1', nested=true) }}"
+    TF_VAR_rds_subnet_cidrs: "{{ lookup('aws_secret', 'alinedbSecret.username', region='us-east-1', nested=true) }}"
+
 
   tasks:
     # - name: Run Terraform for Static Resources

@@ -68,6 +68,7 @@ resource "aws_network_acl" "public" {
 
   tags = {
     Name = "${var.vpc_name}-public-nacl"
+    workspace = var.workspace_name
   }
 
   depends_on = [aws_subnet.public]
@@ -144,5 +145,6 @@ resource "aws_network_acl" "private" {
 
   tags = {
     Name = "${var.vpc_name}-private-nacl"
+    workspace = var.workspace_name
   }
 }

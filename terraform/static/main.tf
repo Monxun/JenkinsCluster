@@ -1,3 +1,8 @@
+
+locals {
+  workspace_name = var.workspace_name
+}
+
 # //////////////////////////////////////
 # VPC - Create the VPC
 # //////////////////////////////////////
@@ -30,6 +35,7 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = "${var.vpc_name}-public-subnet-${var.zones[count.index]}"
+    workspace = var.workspace_name
   }
 }
 
@@ -44,6 +50,7 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = "${var.vpc_name}-private-subnet-${var.zones[count.index]}"
+    workspace = var.workspace_name
   }
 }
 
@@ -58,5 +65,6 @@ resource "aws_subnet" "rds" {
 
   tags = {
     Name = "${var.vpc_name}-rds-subnet-${var.zones[count.index]}"
+    workspace = var.workspace_name
   }
 }
