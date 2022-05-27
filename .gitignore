@@ -130,3 +130,5 @@ dmypy.json
 
 *.plan
 .terraform*
+terraform/jenkins/main.tf
+terraform/jenkins/terraform.tfstate

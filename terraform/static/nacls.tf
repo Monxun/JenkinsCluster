@@ -67,7 +67,7 @@ resource "aws_network_acl" "public" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-public-nacl"
+    Name      = "${var.vpc_name}-public-nacl"
     workspace = var.workspace_name
   }
 
@@ -144,7 +144,7 @@ resource "aws_network_acl" "private" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-private-nacl"
+    Name      = "${var.vpc_name}-private-nacl"
     workspace = var.workspace_name
   }
 }

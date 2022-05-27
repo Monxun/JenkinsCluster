@@ -1,7 +1,7 @@
 # vars.tf
 
 variable "workspace_name" {
-  type = string
+  type    = string
   default = "jenkins"
 }
 
@@ -14,7 +14,7 @@ variable "aws_region" {
 }
 
 variable "zones" {
-  type    = list
+  type    = list(any)
   default = ["us-west-1b", "us-west-1c"]
 }
 
@@ -30,9 +30,9 @@ variable "vpc_name" {
 variable "additional_tags" {
   type = map(string)
   default = {
-    owner = "nightwalkers"
+    owner      = "nightwalkers"
     managed_by = "terraform"
-    workspace = "jenkins"
+    workspace  = "jenkins"
   }
 }
 
@@ -42,17 +42,17 @@ variable "vpc_cidr" {
 }
 
 variable "public_subnet_cidrs" {
-  type = list
+  type    = list(any)
   default = ["10.44.10.0/24", "10.44.11.0/24"]
 }
 
 variable "private_subnet_cidrs" {
-  type = list
+  type    = list(any)
   default = ["10.44.20.0/24", "10.44.21.0/24"]
 }
 
 variable "rds_subnet_cidrs" {
-  type = list
+  type    = list(any)
   default = ["10.44.30.0/24", "10.44.31.0/24"]
 }
 

@@ -7,7 +7,7 @@ resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "${var.vpc_name}-internet-gateway"
+    Name      = "${var.vpc_name}-internet-gateway"
     workspace = var.workspace_name
   }
 }
@@ -19,7 +19,7 @@ resource "aws_eip" "nat_a" {
   vpc = true
 
   tags = {
-    Name = "${var.vpc_name}-eip-nat-a"
+    Name      = "${var.vpc_name}-eip-nat-a"
     workspace = var.workspace_name
   }
 }
@@ -33,7 +33,7 @@ resource "aws_nat_gateway" "zone_a" {
   subnet_id     = aws_subnet.public[0].id
 
   tags = {
-    Name = "${var.vpc_name}-nat-gateway-aza"
+    Name      = "${var.vpc_name}-nat-gateway-aza"
     workspace = var.workspace_name
   }
 
@@ -47,7 +47,7 @@ resource "aws_eip" "nat_b" {
   vpc = true
 
   tags = {
-    Name = "${var.vpc_name}-eip-nat-b"
+    Name      = "${var.vpc_name}-eip-nat-b"
     workspace = var.workspace_name
   }
 }
@@ -58,7 +58,7 @@ resource "aws_nat_gateway" "zone_b" {
   subnet_id     = aws_subnet.public[1].id
 
   tags = {
-    Name = "${var.vpc_name}-nat-gateway-azb"
+    Name      = "${var.vpc_name}-nat-gateway-azb"
     workspace = var.workspace_name
   }
 

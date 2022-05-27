@@ -1,3 +1,4 @@
+provider "aws" {}
 
 locals {
   workspace_name = var.workspace_name
@@ -34,7 +35,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_name}-public-subnet-${var.zones[count.index]}"
+    Name      = "${var.vpc_name}-public-subnet-${var.zones[count.index]}"
     workspace = var.workspace_name
   }
 }
@@ -49,7 +50,7 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.vpc_name}-private-subnet-${var.zones[count.index]}"
+    Name      = "${var.vpc_name}-private-subnet-${var.zones[count.index]}"
     workspace = var.workspace_name
   }
 }
@@ -64,7 +65,7 @@ resource "aws_subnet" "rds" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.vpc_name}-rds-subnet-${var.zones[count.index]}"
+    Name      = "${var.vpc_name}-rds-subnet-${var.zones[count.index]}"
     workspace = var.workspace_name
   }
 }
