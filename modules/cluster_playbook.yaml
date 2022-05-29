@@ -1,0 +1,112 @@
+---
+- hosts: localhost
+  become: false
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  VARIABLES
+# ////////////////////////////////////////////////////////////////////////////////////////
+  vars_files:
+  - "../vars/cluster_vars.yaml"
+
+  vars:
+    # EXTRA VARS
+    destroy: false
+    provisioner: "{{  provisioner_type  }}"  # 'terraform' or 'scripts' 
+    provider: "{{  provider_type  }}"    #| TERRAFORM: aws, gcp | SCRIPTS: kind, k3s, k3ai
+    cluster_type: "{{  cluster_selector  }}"
+
+    # PROJECT VARS
+    project_dir: "{{  repo_name  }}" 
+    project_path: "{{  repo_path  }}"
+    state: present
+
+    # REMOTE STATE VARS
+    aws_region: "{{  aws_default_region  }}"
+    gcp_region: "{{  gcp_default_region  }}"
+
+     # PLAYBOOK VARS
+    module_name: cluster
+    playbook_path: "{{ project_path }}/{{ project_dir }}/ansible/{{ provisioner }}"
+
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  ENVIRONMENT VARIABLES
+# ////////////////////////////////////////////////////////////////////////////////////////
+  environment:
+    TF_VAR_workspace_name: "{{ workspace_name }}"
+
+    TF_VAR_state_bucket_name: "{{ state_bucket }}"
+    TF_VAR_state_object_key: "{{ state_object_key }}"
+    TF_VAR_state_lock_table_name: "{{ lock_db }}"
+
+    AWS_REGION: "{{ aws_region }}"
+    GCP_REGION: "{{ gcp_region }}"
+
+    TF_VAR_project_id: "{{ gcp_project_id }}"
+
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  TASKS
+# ////////////////////////////////////////////////////////////////////////////////////////
+  tasks:
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  CLOUD PROVIDERS
+# ////////////////////////////////////////////////////////////////////////////////////////
+
+  # DEPLOY //////////////////////////////////////////////////////////////////////
+    - name: Run Terraform Deployment for {{ cluster_type | upper }} Resources
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: bash deploy.sh
+        chdir: "{{ playbook_path }}/{{ cloud_provider }}/{{ module_name }}s/{{ cluster_type }}/"
+      register: deploy_cloud_cluster_results
+      when: (destroy == "false") and (provisioner == "terraform")
+    # - debug:
+    #     var: results.stdout
+    
+
+  # DESTROY //////////////////////////////////////////////////////////////////////
+    - name: Destroy {{ module_name | capitalize }} Resources ({{ cluster_type }})
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: bash destroy.sh
+        chdir: "{{ playbook_path }}/{{ cloud_provider }}/{{ module_name }}s/{{ cluster_type }}/"
+      register: destroy_cloud_cluster_results
+      when: (destroy == "true") and (provisioner == "terraform")
+    # - debug:
+    #     var: "{{ project_dir }}_{{ module_name }}_results.stdout"
+
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  LOCAL PROVIDERS
+# ////////////////////////////////////////////////////////////////////////////////////////
+
+  # DEPLOY //////////////////////////////////////////////////////////////////////
+    - name: Deploy {{ module_name | capitalize }} Resources ({{ cluster_type }}) via {{ provisioner_type }}
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: "bash k3ai.sh -a deploy -n {{ owner-name }}-{{ cluster_name }}-{{ cluster_type }} -t {{ cluster_type }}"
+        chdir: "{{ playbook_path }}/"
+      register: deploy_k3ai_cluster_results
+      when: (destroy == "false") and (provisioner == "scripts")
+    # - debug:
+    #     var: "{{ project_dir }}_{{ module_name }}_results.stdout"
+
+
+  # DESTROY //////////////////////////////////////////////////////////////////////
+    - name: Destroy {{ module_name | capitalize }} Resources ({{ cluster_type }}) via {{ provisioner_type }}
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: "bash k3ai.sh -a destroy -n {{ owner-name }}-{{ cluster_name }}-{{ cluster_type }}"
+        chdir: "{{ playbook_path }}/"
+      register: destroy_k3ai_cluster_results
+      when: (destroy == "true") and (provisioner == "scripts")
+    # - debug:
+    #     var: "{{ project_dir }}_{{ module_name }}_results.stdout"
+
+    

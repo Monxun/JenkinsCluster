@@ -1,0 +1,70 @@
+---
+- hosts: localhost
+  become: false
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  VARIABLES
+# ////////////////////////////////////////////////////////////////////////////////////////
+  vars_files:
+  - "../vars/static_vars.yaml"
+
+  vars:
+    # EXTRA VARS
+    destroy: false
+    cloud_provider: "{{ provider_type }}"
+
+    # PROJECT VARS
+    project_dir: "{{  repo_name  }}" 
+    project_path: "{{  repo_path  }}"
+    state: present
+
+    # REGIONS
+    aws_region: "{{  aws_default_region  }}"
+    gcp_region: "{{  gcp_default_region  }}"
+
+    # VPC PARAMETERS
+    vpc_name: nightwalkers-vpc-vpc
+
+    # PLAYBOOK VARS
+    module_name: static
+    playbook_path: "{{ project_path }}/{{ project_dir }}/ansible/terraform/{{ cloud_provider }}"
+
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+#  ENVIRONMENT VARIABLES
+# ////////////////////////////////////////////////////////////////////////////////////////
+  environment:
+    TF_VAR_workspace_name: "{{ workspace_name }}"
+
+    TF_VAR_state_bucket_name: "{{ state_bucket }}" 
+    TF_VAR_state_object_key: "{{ state_object_key }}"
+    TF_VAR_state_lock_table_name: "{{ lock_db }}"
+
+    AWS_REGION: "{{ aws_region }}"
+
+
+  tasks:
+  # DEPLOY //////////////////////////////////////////////////////////////////////
+    - name: Run Terraform Deployment for {{ module_name | capitalize }} Resources
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: bash deploy.sh
+        chdir: "{{ playbook_path }}/{{ module_name }}/"
+      register: deploy_static_results
+      when: destroy == "false" 
+    # - debug:
+    #     var: "{{ project_dir }}_{{ module_name }}_results.stdout"
+
+
+# DESTROY //////////////////////////////////////////////////////////////////////
+    - name: Destroy {{ module_name | capitalize }} Resources
+      shell:
+      args:
+        executable: /usr/bin/bash
+        cmd: bash destroy.sh
+        chdir: "{{ playbook_path }}/{{ module_name }}/"
+      register: destroy_static_results
+      when: destroy == "true" 
+    # - debug:
+    #     var: "{{ project_dir }}_{{ module_name }}_results.stdout"

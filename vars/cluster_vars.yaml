@@ -1,0 +1,30 @@
+---
+# PROJECT DETAILS
+repo_name: KubeflowCluster    # REPO DIR NAME
+repo_path: ~/Git              # PATH OF REPO DIR ROOT 
+owner_name: mg  
+
+workspace_name: jenkins       #TERRAFORM WORKSPACE NAME
+
+provisioner_type: terraform   # terraform OR scripts
+provider_type: gcp            #| TERRAFORM: aws, gcp | SCRIPTS: kind, k3s, k3ai
+
+cluster_name: kubeflow        # WHAT TO NAME THE NEW CLUSTER
+cluster_selector: gke         # DETERMINE CLUSTER TYPE
+                              # eks, ecs, gke, gcm, kind, k3s, k3ai
+
+# CLOUD PROVIDER DETAILS
+aws_default_region: us-west-2 # DEFAULT AWS REGION
+gcp_default_region: us-west1  # DEFAULT GCP REGION
+
+gcp_project_id: kubeflow-gke  # GCP PROJECT ID 
+
+# REMOTE STATE
+state_bucket: jenkins-state-nightwalkers
+state_object_key: us-east-1/s3/jenkins-terraform.tfstate
+lock_db: tf-state-jenkins-lock
+
+# SECRETS
+git_token:
+become_root: true
+

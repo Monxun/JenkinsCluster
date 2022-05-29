@@ -1,0 +1,17 @@
+---
+repo_name: KubeflowCluster
+repo_path: ~/Git
+
+provider_type: aws
+
+cluster_selector: k3ai  
+# eks, ecs, gke, gcm, kind, k3s, k3ai
+
+aws_default_region: us-west-2
+gcp_default_region: us-west1
+
+workspace_name: jenkins
+
+state_bucket: jenkins-state-nightwalkers
+state_object_key: us-east-1/s3/jenkins-terraform.tfstate
+lock_db: tf-state-jenkins-lock
